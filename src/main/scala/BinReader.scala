@@ -5,7 +5,6 @@ object BinReader {
   def getInstructions(fileName: String): Stream[Instruction] = {
     val rawAsm = Files
       .readAllBytes(Paths.get(fileName))
-      .map(_.toShort & 0xFFFF)
       .sliding(2, 2)
       .map { case Array(b1, b2) => (b2 << 8 | b1) & 0xFFFF }
       .toList
@@ -42,14 +41,14 @@ object BinReader {
       case 16 => WMem(a, b)
       case 17 => Call(a)
       case 18 => Ret
-      case 19 => Out(c.toChar)
+      case 19 => Out(a)
       case 20 => In(a)
       case 21 => Noop
       case _  => Unknown
 
     }
 
-    instruction #:: getInstructions(rawAsm.drop(1).drop(instruction.paramCount))
+    instruction #:: getInstructions(rawAsm.tail.drop(instruction.paramCount))
   }
 
 }
