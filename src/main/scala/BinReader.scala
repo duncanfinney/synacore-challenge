@@ -2,26 +2,25 @@ import java.nio.file.{Paths, Files}
 
 object BinReader {
 
-  def getInstructions(fileName: String): Stream[Instruction] = {
-    val rawAsm = Files
+  def getBytes(fileName: String): List[Int] = {
+    Files
       .readAllBytes(Paths.get(fileName))
+      .map(_.toChar.toInt)
       .sliding(2, 2)
-      .map { case Array(b1, b2) => (b2 << 8 | b1) & 0xFFFF }
+      .map { case Array(b1, b2) => 0xFFFF & ((b2 & 0xFF) << 8 | (b1 & 0xFF)) }
       .toList
 
-    getInstructions(rawAsm)
+
   }
 
-  def getInstructions(rawAsm: List[Int]): Stream[Instruction] = {
-    if (rawAsm.isEmpty) {
-      return Stream.Empty
-    }
 
-    lazy val a = rawAsm(1)
-    lazy val b = rawAsm(2)
-    lazy val c = rawAsm(3)
+  def getInstructionAtLocation(rawAsm: Map[Int, Int], location: Int): Instruction = {
 
-    val instruction: Instruction = rawAsm.head match {
+    lazy val a = rawAsm(location + 1)
+    lazy val b = rawAsm(location + 2)
+    lazy val c = rawAsm(location + 3)
+
+    rawAsm(location) match {
       case 0  => Halt
       case 1  => Set(a, b)
       case 2  => Push(a)
@@ -44,11 +43,9 @@ object BinReader {
       case 19 => Out(a)
       case 20 => In(a)
       case 21 => Noop
-      case _  => Unknown
+      case x  => throw new Error(s"Unknown opcode $x")
 
     }
-
-    instruction #:: getInstructions(rawAsm.tail.drop(instruction.paramCount))
   }
 
 }
