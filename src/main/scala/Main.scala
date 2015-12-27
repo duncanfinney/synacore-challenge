@@ -2,7 +2,7 @@ import scala.annotation.tailrec
 
 object Main extends App {
 
-  val debug = true
+  val debug = false
 
   def debugMemory(vm: VM): Unit = {
     if (!debug) {

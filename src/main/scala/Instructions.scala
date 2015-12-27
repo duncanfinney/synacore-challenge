@@ -135,7 +135,7 @@ case class Multiply(a: Int, b: Int, c: Int) extends Instruction3 {
 case class Modulo(a: Int, b: Int, c: Int) extends Instruction3 {
   override def applyTo(vm: VM) = {
     vm
-      .updateMemory(a, vm.toValue(b) % vm.toValue(c))
+      .updateMemory(a, vm.toValue(b) % vm.toValue(c) % 32768)
       .moveInstructionPointer
   }
 }
@@ -143,7 +143,7 @@ case class Modulo(a: Int, b: Int, c: Int) extends Instruction3 {
 case class And(a: Int, b: Int, c: Int) extends Instruction3 {
   override def applyTo(vm: VM) = {
     vm
-      .updateMemory(a, vm.toValue(b) & vm.toValue(c))
+      .updateMemory(a, (vm.toValue(b) & vm.toValue(c)) & 0x7FFF)
       .moveInstructionPointer
   }
 }
@@ -151,7 +151,7 @@ case class And(a: Int, b: Int, c: Int) extends Instruction3 {
 case class Or(a: Int, b: Int, c: Int) extends Instruction3 {
   override def applyTo(vm: VM) = {
     vm
-      .updateMemory(a, vm.toValue(b) | vm.toValue(c))
+      .updateMemory(a, (vm.toValue(b) | vm.toValue(c)) & 0x7FFF)
       .moveInstructionPointer
   }
 }
