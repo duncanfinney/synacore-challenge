@@ -11,7 +11,7 @@ your progress.  Good luck!
   - eight registers
   - an unbounded stack which holds individual 16-bit values
 - all numbers are unsigned integers 0..32767 (15-bit)
-- all math is modulo 32768; 32758 + 15 => 5
+    - all math is modulo 32768; 32758 + 15 => 5
 
 == binary format ==
 - each number is stored as a 16-bit little-endian pair (low byte, high byte)
