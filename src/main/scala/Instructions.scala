@@ -158,7 +158,6 @@ case class Or(a: Int, b: Int, c: Int) extends Instruction3 {
 
 case class Not(a: Int, b: Int) extends Instruction2 {
   override def applyTo(vm: VM) = {
-    println(s"NOT($a, $b)")
     vm
       .updateMemory(a, (~vm.toValue(b)) & 0x7FFF)
       .moveInstructionPointer
@@ -184,7 +183,7 @@ case class WMem(a: Int, b: Int) extends Instruction2 {
 case class Call(a: Int) extends Instruction1 {
   override def applyTo(vm: VM) = {
     vm
-      .stackPush(vm.instructionPointer + 1)
+      .stackPush(vm.instructionPointer + 1 + vm.currentInstruction.paramCount)
       .moveInstructionPointer(vm.toValue(a))
   }
 }
