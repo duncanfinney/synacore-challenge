@@ -1,7 +1,22 @@
+object Instruction {
+  val debugRegisterStrings = (32768 to 32775).zipWithIndex.map{ case (v, rNum) => v.toString -> s"R$rNum" }
+}
+
 abstract class Instruction {
   def paramCount: Int
 
   def applyTo(vm: VM): VM = vm.moveInstructionPointer
+
+  /**
+    * Down and dirty method to replace the register nums
+    * w/ more human readable names
+    */
+  def debugString = {
+    var output = this.toString
+    for (r <- Instruction.debugRegisterStrings) output = output.replace(r._1, r._2)
+    output = output.replace("\n", raw"\n")
+    output
+  }
 }
 
 abstract class Instruction0 extends Instruction {
@@ -48,13 +63,13 @@ case class Set(a: Int, b: Int) extends Instruction2 {
 }
 
 case class Push(a: Int) extends Instruction1 {
-  override def applyTo(vm: VM) = vm.stackPush(a).moveInstructionPointer
+  override def applyTo(vm: VM) = vm.stackPush(vm.toValue(a)).moveInstructionPointer
 }
 
 case class Pop(a: Int) extends Instruction1 {
   override def applyTo(vm: VM) = {
     vm
-      .updateMemory(a, vm.stack.head)
+      .updateMemory(a, vm.toValue(vm.stack.head))
       .stackPop()
       .moveInstructionPointer
   }
@@ -183,11 +198,11 @@ case object Ret extends Instruction0 {
 
 case class Out(a: Int) extends Instruction1 {
   override def applyTo(vm: VM) = {
-    print(a.toChar)
+    if (!vm.debug) print(a.toChar)
     vm.moveInstructionPointer
   }
 
-  override def toString = s"Out(${a.toChar})"
+  override def toString = raw"Out(${a.toChar})"
 }
 
 case class In(a: Int) extends Instruction1 {

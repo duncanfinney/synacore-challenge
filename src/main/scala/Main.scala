@@ -2,10 +2,17 @@ import scala.annotation.tailrec
 
 object Main extends App {
 
-  val debug = false
+  val debug = true
 
   def debugMemory(vm: VM): Unit = {
-    println(vm.instructionPointer + " | [" + (for (r <- 32768 to 32775) yield vm.memory(r)).toList.mkString(" ") + "] | " + vm.currentInstruction)
+    val registerOutput = (for (r <- 32768 to 32775) yield String.format("%-5s", vm.memory(r).toString)).mkString(" ")
+
+    println(
+
+      f"${vm.instructionPointer}%6s | $registerOutput%30s | ${vm.stack}%-10s | => ${vm.currentInstruction.debugString}"
+
+    )
+
   }
 
   @tailrec
@@ -23,7 +30,7 @@ object Main extends App {
     .toMap
     .withDefault(_ => 0)
 
-  val vm = VM(initialMemory, List(), 0)
+  val vm = VM(initialMemory, List(), 0, debug)
   execute(vm)
 
 }
