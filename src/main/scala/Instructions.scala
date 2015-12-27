@@ -42,7 +42,7 @@ case object Halt extends Instruction0 {
 case class Set(a: Int, b: Int) extends Instruction2 {
   override def applyTo(vm: VM) = {
     vm
-      .updateRegister(a, b)
+      .updateMemory(a, b)
       .moveInstructionPointer
   }
 }
@@ -54,7 +54,7 @@ case class Push(a: Int) extends Instruction1 {
 case class Pop(a: Int) extends Instruction1 {
   override def applyTo(vm: VM) = {
     vm
-      .updateRegister(a, vm.stack.head)
+      .updateMemory(a, vm.stack.head)
       .stackPop()
       .moveInstructionPointer
   }
@@ -65,7 +65,7 @@ case class Eq(a: Int, b: Int, c: Int) extends Instruction3 {
     val value =
       if (vm.toValue(b) == vm.toValue(c)) 1
       else 0
-    vm.updateRegister(a, value).moveInstructionPointer
+    vm.updateMemory(a, value).moveInstructionPointer
   }
 }
 
@@ -74,7 +74,7 @@ case class Gt(a: Int, b: Int, c: Int) extends Instruction3 {
     val value =
       if (vm.toValue(b) > vm.toValue(c)) 1
       else 0
-    vm.updateRegister(a, value).moveInstructionPointer
+    vm.updateMemory(a, value).moveInstructionPointer
   }
 }
 
@@ -103,7 +103,7 @@ case class JumpF(a: Int, b: Int) extends Instruction2 {
 case class Add(a: Int, b: Int, c: Int) extends Instruction3 {
   override def applyTo(vm: VM) = {
     vm
-      .updateRegister(a, (vm.toValue(b) + vm.toValue(c)) % 32768)
+      .updateMemory(a, (vm.toValue(b) + vm.toValue(c)) % 32768)
       .moveInstructionPointer
   }
 }
@@ -112,7 +112,7 @@ case class Add(a: Int, b: Int, c: Int) extends Instruction3 {
 case class Multiply(a: Int, b: Int, c: Int) extends Instruction3 {
   override def applyTo(vm: VM) = {
     vm
-      .updateRegister(a, (vm.toValue(b) * vm.toValue(c)) % 32768)
+      .updateMemory(a, (vm.toValue(b) * vm.toValue(c)) % 32768)
       .moveInstructionPointer
   }
 }
@@ -120,7 +120,7 @@ case class Multiply(a: Int, b: Int, c: Int) extends Instruction3 {
 case class Modulo(a: Int, b: Int, c: Int) extends Instruction3 {
   override def applyTo(vm: VM) = {
     vm
-      .updateRegister(a, vm.toValue(b) % vm.toValue(c))
+      .updateMemory(a, vm.toValue(b) % vm.toValue(c))
       .moveInstructionPointer
   }
 }
@@ -128,7 +128,7 @@ case class Modulo(a: Int, b: Int, c: Int) extends Instruction3 {
 case class And(a: Int, b: Int, c: Int) extends Instruction3 {
   override def applyTo(vm: VM) = {
     vm
-      .updateRegister(a, vm.toValue(b) & vm.toValue(c))
+      .updateMemory(a, vm.toValue(b) & vm.toValue(c))
       .moveInstructionPointer
   }
 }
@@ -136,7 +136,7 @@ case class And(a: Int, b: Int, c: Int) extends Instruction3 {
 case class Or(a: Int, b: Int, c: Int) extends Instruction3 {
   override def applyTo(vm: VM) = {
     vm
-      .updateRegister(a, vm.toValue(b) | vm.toValue(c))
+      .updateMemory(a, vm.toValue(b) | vm.toValue(c))
       .moveInstructionPointer
   }
 }
@@ -144,7 +144,7 @@ case class Or(a: Int, b: Int, c: Int) extends Instruction3 {
 case class Not(a: Int, b: Int) extends Instruction2 {
   override def applyTo(vm: VM) = {
     vm
-      .updateRegister(a, (~vm.toValue(b)) & 0xFFFF)
+      .updateMemory(a, (~vm.toValue(b)) & 0xFFFF)
       .moveInstructionPointer
   }
 }
@@ -152,7 +152,7 @@ case class Not(a: Int, b: Int) extends Instruction2 {
 case class RMem(a: Int, b: Int) extends Instruction2 {
   override def applyTo(vm: VM) = {
     vm
-      .updateRegister(a, vm.toValue(b))
+      .updateMemory(a, vm.toValue(b))
       .moveInstructionPointer
   }
 }
@@ -193,7 +193,7 @@ case class Out(a: Int) extends Instruction1 {
 case class In(a: Int) extends Instruction1 {
   override def applyTo(vm: VM) = {
     val char = scala.io.StdIn.readChar() & 0xFFFF
-    vm.updateRegister(a, char)
+    vm.updateMemory(a, char)
   }
 }
 
