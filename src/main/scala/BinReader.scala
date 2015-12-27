@@ -7,7 +7,7 @@ object BinReader {
       .readAllBytes(Paths.get(fileName))
       .map(_.toChar.toInt)
       .sliding(2, 2)
-      .map { case Array(b1, b2) => 0xFFFF & ((b2 & 0xFF) << 8 | (b1 & 0xFF)) }
+      .map { case Array(b1, b2) => 0xFFFF & (((b2 & 0xFF) << 8) | (b1 & 0xFF)) }
       .toList
   }
 

@@ -1,5 +1,5 @@
 object Instruction {
-  val debugRegisterStrings = (32768 to 32775).zipWithIndex.map{ case (v, rNum) => v.toString -> s"R$rNum" }
+  val debugRegisterStrings = (32768 to 32775).zipWithIndex.map { case (v, rNum) => v.toString -> s"R$rNum" }
 }
 
 abstract class Instruction {
@@ -167,7 +167,7 @@ case class Not(a: Int, b: Int) extends Instruction2 {
 case class RMem(a: Int, b: Int) extends Instruction2 {
   override def applyTo(vm: VM) = {
     vm
-      .updateMemory(a, vm.toValue(b))
+      .updateMemory(a, vm.memory(vm.toValue(b)))
       .moveInstructionPointer
   }
 }

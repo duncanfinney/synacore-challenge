@@ -1,3 +1,7 @@
+object VM {
+  def isRegister(n: Int) = (32768 to 32775).contains(n)
+}
+
 case class VM(memory: Map[Int, Int] = Map().withDefault(_ => 0),
               stack: List[Int] = List(),
               instructionPointer: Int,

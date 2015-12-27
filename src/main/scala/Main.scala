@@ -2,7 +2,7 @@ import scala.annotation.tailrec
 
 object Main extends App {
 
-  val debug = false
+  val debug = true
 
   def debugMemory(vm: VM): Unit = {
     if (!debug) {
@@ -21,6 +21,12 @@ object Main extends App {
     execute(vm.currentInstruction.applyTo(vm))
   }
 
+  def disassemble(mem: Map[Int, Int], addr: Int = 0) : Unit = {
+    val ins = BinReader.getInstructionAtLocation(mem, addr)
+    println(f"[$addr%05d] -> $ins")
+    disassemble(mem, addr + ins.paramCount + 1)
+  }
+
   val initialMemory = BinReader
     .getBytes("src/main/resources/challenge.bin")
     .zipWithIndex
@@ -28,8 +34,10 @@ object Main extends App {
     .toMap
     .withDefault(_ => 0)
 
-  val vm = VM(initialMemory, List(), 0, debug)
-  execute(vm)
+//  disassemble(initialMemory)
+
+    val vm = VM(initialMemory, List(), 0, debug)
+    execute(vm)
 
 }
 
